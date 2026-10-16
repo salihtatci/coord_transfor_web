@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#09172c">
+  <meta name="description" content="GEO532 — 3B jeodezik koordinat dönüşümlerini tarayıcıda hesaplayın. Coğrafi, Kartezyen, Bursa-Wolf, Molodensky-Badekas ve IERS 14-parametre modelleri.">
+  <title>GEO532 — Jeodezik Dönüşüm Laboratuvarı</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="background-grid" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="#anasayfa" aria-label="GEO532 ana sayfa"><span class="brand-mark"><svg viewBox="0 0 42 42" fill="none" aria-hidden="true"><circle cx="21" cy="21" r="14.5" stroke="currentColor" stroke-width="1.6"/><ellipse cx="21" cy="21" rx="7" ry="14.5" stroke="currentColor" opacity=".75" stroke-width="1.2"/><path d="M7 21h28M10 13h22M10 29h22" stroke="currentColor" opacity=".65" stroke-width="1.2"/><circle cx="31.2" cy="10.8" r="3.5" fill="#45dfc5"/></svg></span><span>GEO<span class="brand-accent">532</span><small>GEODETIC LAB</small></span></a>
+    <nav class="navlinks" aria-label="Ana menü"><a href="#donusum">Dönüşüm aracı</a><a href="#yontemler">Yöntemler</a><a href="#hakkinda">Proje hakkında</a></nav>
+    <a class="nav-action" href="#donusum">Hesaplamaya başla <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="anasayfa">
+    <section class="hero content-width">
+      <div class="hero-left">
+        <div class="eyebrow"><span class="live-dot"></span> GEO532 · İNTERAKTİF JEODEZİK HESAPLAMA</div>
+        <h1>Koordinatlar değişir.<br><span>Matematik aynı kalır.</span></h1>
+        <p class="hero-description">Üç boyutlu koordinatları dönüştürün, referans çerçeveleri arasında geçiş yapın ve kullanılan matematiksel modelleri adım adım inceleyin. Doğrudan tarayıcınızda.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#donusum">Dönüşüm aracını aç <span>→</span></a><a class="button button-ghost" href="#yontemler">Yöntemleri keşfet <span>↗</span></a></div>
+        <div class="hero-metadata"><div><strong>03</strong><span>Model ailesi</span></div><div><strong>14</strong><span>Referans sistemi</span></div><div><strong>100%</strong><span>Tarayıcıda hesaplama</span></div></div>
+      </div>
+      <div class="visual" aria-label="Üç boyutlu küre ve koordinat eksenleri illüstrasyonu">
+        <div class="visual-halo"></div><div class="globe">
+          <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="orbit orbit-c"></div>
+          <div class="globe-body"><div class="latitude lat-1"></div><div class="latitude lat-2"></div><div class="latitude lat-3"></div><div class="longitude lon-1"></div><div class="longitude lon-2"></div><div class="longitude lon-3"></div></div>
+          <div class="axis axis-z"><span>Z</span></div><div class="axis axis-x"><span>X</span></div><div class="axis axis-y"><span>Y</span></div>
+        </div>
+        <div class="visual-note top-note"><span class="visual-note-circle">◉</span><span>3D SPATIAL REFERENCE<small>ECEF · XYZ</small></span></div>
+        <div class="visual-note bottom-note"><span class="signal"></span><span>Matematiksel dönüşüm<small>Doğrulanabilir parametreler</small></span></div>
+        <div class="visual-caption">01 — THREE-DIMENSIONAL REFERENCE</div>
+      </div>
+    </section>
+
+    <section class="workspace-section" id="donusum">
+      <div class="content-width">
+        <div class="section-top"><div><span class="section-kicker">01 / LABORATUVAR</span><h2>Koordinat dönüşüm aracı</h2><p>Bir işlem türü seçin, koordinatları girin ve hesaplayın.</p></div><span class="ready-chip"><span></span> İstemci tarafında çalışır</span></div>
+        <div class="workspace">
+          <div class="tool-tabs" role="tablist" aria-label="Hesaplama türü">
+            <button type="button" class="tool-tab active" data-panel="geo" role="tab" aria-selected="true"><span class="tool-tab-icon">◎</span> Coğrafi ↔ Kartezyen</button>
+            <button type="button" class="tool-tab" data-panel="datum" role="tab" aria-selected="false"><span class="tool-tab-icon">⥊</span> 3B datum / çerçeve</button>
+          </div>
+          <div class="tool-body">
+            <div class="input-panel">
+              <form id="geo-form" class="form-body" novalidate>
+                <div class="form-heading"><h3>Koordinat türünü dönüştür</h3><p>Aynı elipsoit içerisinde coğrafi ve jeosentrik Kartezyen gösterimler.</p></div>
+                <div class="field"><label for="geo-ellipsoid">Referans elipsoidi</label><select id="geo-ellipsoid"></select></div>
+                <div class="field"><label for="geo-direction">Dönüşüm yönü</label><select id="geo-direction"><option value="forward">Coğrafi (φ, λ, h) → Kartezyen (X, Y, Z)</option><option value="reverse">Kartezyen (X, Y, Z) → Coğrafi (φ, λ, h)</option></select></div>
+                <div class="fieldgroup"><div class="field"><label id="geo-l1" for="geo-a">Enlem φ <em>(°)</em></label><input id="geo-a" type="text" inputmode="decimal" value="41.0082"></div><div class="field"><label id="geo-l2" for="geo-b">Boylam λ <em>(°)</em></label><input id="geo-b" type="text" inputmode="decimal" value="28.9784"></div><div class="field"><label id="geo-l3" for="geo-c">Yükseklik h <em>(m)</em></label><input id="geo-c" type="text" inputmode="decimal" value="50"></div></div>
+                <button type="submit" class="button button-primary button-full">Dönüşümü hesapla <span>→</span></button>
+              </form>
+              <form id="datum-form" class="form-body hidden" novalidate>
+                <div class="form-heading"><h3>Referans sistemleri arasında dönüşüm</h3><p>Kaynak, hedef ve matematiksel model seçerek sonuç üretin.</p></div>
+                <div class="pair-grid"><div class="field"><label for="datum-from">Kaynak sistem</label><select id="datum-from"></select></div><button type="button" class="swap-button" id="swap-datums" title="Kaynak ve hedef sistemleri değiştir" aria-label="Kaynak ve hedef sistemleri değiştir">⇄</button><div class="field"><label for="datum-to">Hedef sistem</label><select id="datum-to"></select></div></div>
+                <div class="field"><label for="datum-model">Dönüşüm modeli</label><select id="datum-model"><option value="IERS14">IERS 14-parametre (zamana bağlı)</option><option value="HELMERT7">7-parametre (hızsız IERS karşılaştırması)</option><option value="BURSA_WOLF">Bursa-Wolf (7 parametre)</option><option value="MOLODENSKY_BADEKAS">Molodensky-Badekas (merkezli 7 parametre)</option></select></div>
+                <div class="field" id="epoch-field"><label for="datum-epoch">Koordinat epoğu <em>(ondalık yıl)</em></label><input id="datum-epoch" value="2025.0" inputmode="decimal" type="text"></div>
+                <div class="field"><label for="datum-input-type">Giriş koordinat biçimi</label><select id="datum-input-type"><option value="cart">Kartezyen — X, Y, Z</option><option value="geo">Coğrafi — φ, λ, h</option></select></div>
+                <div class="fieldgroup"><div class="field"><label id="datum-l1" for="datum-a">X <em>(m)</em></label><input type="text" inputmode="decimal" id="datum-a" value="4116037.2588"></div><div class="field"><label id="datum-l2" for="datum-b">Y <em>(m)</em></label><input type="text" inputmode="decimal" id="datum-b" value="2656358.3524"></div><div class="field"><label id="datum-l3" for="datum-c">Z <em>(m)</em></label><input type="text" inputmode="decimal" id="datum-c" value="4072204.7958"></div></div>
+                <div id="parameter-preview" class="parameter-preview" aria-live="polite"></div>
+                <div class="manual-choice hidden" id="manual-option"><label class="checkbox-line"><input id="manual-toggle" type="checkbox"><span>Hazır parametre yerine manuel parametre kullan</span></label></div>
+                <div id="manual-fields" class="manual-fields hidden"><div class="manual-caption">Değerleri yalnızca kaynağından doğruladıysanız girin · m / ppm / yay saniyesi</div><div class="param-grid" id="param-grid"></div><div class="field"><label for="manual-convention">Dönüklük konvansiyonu</label><select id="manual-convention"><option>PV</option><option>CF</option></select></div><label class="checkbox-line"><input type="checkbox" id="manual-inverse">Girdiğim parametreler ters yön için tanımlı</label><div class="manual-caption">Molodensky-Badekas için dönüklük merkezi zorunludur.</div></div>
+                <button type="submit" id="datum-submit" class="button button-primary button-full">3B dönüşümü hesapla <span>→</span></button>
+              </form>
+            </div>
+            <div class="result-panel" aria-live="polite">
+              <div class="result-top"><span class="result-kicker"><span class="pulse-dot"></span> HESAPLAMA ÇIKTISI</span><span class="result-label" id="result-mode-label">GEO / ECEF</span></div>
+              <div id="result-main" class="result-main"><div class="empty-result"><div class="empty-icon">⌖</div><h3>Hesaplamaya hazırsınız</h3><p>Soldaki alanlara koordinatlarınızı girin. Hesaplanan sonuçlar ve kullanılan matematiksel model burada görünecek.</p></div></div>
+              <div class="result-bottom"><button type="button" class="small-action" id="copy-result" disabled>Kopyala <span>↗</span></button><button type="button" class="small-action" id="download-result" disabled>JSON indir <span>↓</span></button><span class="privacy-caption">Veriler sunucuya gönderilmez</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="warning-strip"><span class="warning-icon">i</span><p><strong>Jeodezik not:</strong> ITRF96 çerçevesindeki seçili epok koordinatları otomatik olarak TUREF 2005.0 koordinatlarına taşınmaz. Bunun için nokta hızları veya geçerli bir hız modeli gereklidir. EPSG:1784 ise Türkiye için yaklaşık ED50 dönüşümüdür.</p></div>
+      </div>
+    </section>
+    <section class="methods content-width" id="yontemler"><div class="section-top"><div><span class="section-kicker">02 / MATEMATİKSEL YAKLAŞIM</span><h2>Birden çok model. Tek bir amaç.</h2><p>Bir dönüşümün doğru yorumlanabilmesi, kullanılan modelin ve parametrelerin bilinmesine bağlıdır.</p></div></div>
+      <div class="method-grid"><article class="method-card"><div class="method-number">01 / TEMEL</div><div class="method-icon">φ</div><h3>Coğrafi ↔ Kartezyen</h3><p>Elipsoidal enlem, boylam ve yükseklik ile jeosentrik X, Y, Z bileşenleri arasında çift yönlü hesaplama.</p><div class="method-equation">X = (N + h) cos φ cos λ</div><span class="method-tag">WGS84 · GRS80 · Hayford</span></article>
+      <article class="method-card"><div class="method-number">02 / 7 PARAMETRE</div><div class="method-icon">R</div><h3>Bursa-Wolf &amp; Molodensky-Badekas</h3><p>Öteleme, ortak ölçek ve üç dönüklük ile 3B datum dönüşümü. Merkezli Molodensky-Badekas için ayrıca dönüklük merkezi gerekir.</p><div class="method-equation">X₂ = T + (1 + D) R X₁</div><span class="method-tag">PV / CF · m / ppm / yay sn</span></article>
+      <article class="method-card"><div class="method-number">03 / ZAMANA BAĞLI</div><div class="method-icon">t</div><h3>IERS 14-parametre</h3><p>ITRF gerçekleşimleri arasında, dönüşüm parametrelerinin yıllık değişimlerini hesaba katan model. Gerektiğinde dönüşüm zincirleri kullanılır.</p><div class="method-equation">P(t) = P(t₀) + Ṗ(t − t₀)</div><span class="method-tag">ITRF / EUREF · epok duyarlı</span></article></div>
+    </section>
+    <section class="about-section" id="hakkinda"><div class="content-width about-grid"><div><span class="section-kicker">03 / PROJE NOTLARI</span><h2>Açık, incelenebilir<br>ve tekrar üretilebilir.</h2><p>GEO532, Python + Kivy masaüstü uygulamasındaki matematiksel hesaplama mantığının, GitHub Pages üzerinde çalışan bağımsız JavaScript sürümüdür. Hazır dönüşüm parametrelerinin kaynağı gösterilir; bulunmayan değerler tahmin edilmez.</p><a href="https://epsg.org" target="_blank" rel="noopener noreferrer" class="text-link">EPSG kayıtları ↗</a><a href="https://itrf.ign.fr/en/solutions/transformations" target="_blank" rel="noopener noreferrer" class="text-link">ITRF dönüşüm tabloları ↗</a></div><div class="about-list"><div><span>01</span><div><strong>Şeffaf parametreler</strong><p>Hesaplanan koordinatla birlikte kullanılan yöntem, kaynak ve dönüşüm yolu görünür.</p></div></div><div><span>02</span><div><strong>İnternet bağlantısı gerektirmeyen matematik</strong><p>Sayfa yüklendikten sonra dönüşüm işlemleri tarayıcının içinde çalışır.</p></div></div><div><span>03</span><div><strong>Akademik sınırlar</strong><p>Epok kaydırma, yaklaşım varsayımları ve veri eksikliği açıkça belirtilir.</p></div></div></div></div></section>
+  </main>
+  <footer class="footer content-width"><div class="footer-brand">GEO<span>532</span><small>JEODEZİK DÖNÜŞÜM LABORATUVARI</small></div><p>Eğitim ve araştırma amaçlı hesaplama aracı. Resmî mühendislik çalışmalarında bağımsız doğrulama gerektirir.</p><a href="#anasayfa">Başa dön ↑</a></footer>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
